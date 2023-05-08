@@ -21,6 +21,9 @@ import javax.net.ssl.SSLSocketFactory;
 
 public class HTTP {
 
+	public static boolean REQUEST_LOGGING = false;
+	public static boolean RESPONSE_LOGGING = false;
+
 	public static String readChar(InputStream in) throws IOException {
 		int theByte = in.read();
 		if (theByte == -1) {
@@ -174,9 +177,13 @@ public class HTTP {
 		request.useGzipCompression();
 		request.headers.remove("host");
 		request.headers.add("host", host + (port == -1 ? "" : ":" + port));
-
+		if (REQUEST_LOGGING) System.out.println(new String(request.getBytes()));
 		out.write(request.getBytes());
 		Response response = readResponse(in);
+		if (RESPONSE_LOGGING) {
+			response.disableCompression();
+			System.out.println(new String(response.getBytes()));
+		}
 		return response;
 
 	}
@@ -229,10 +236,15 @@ public class HTTP {
 		request.useGzipCompression();
 		request.headers.remove("host");
 		request.headers.add("host", host + (port == -1 ? "" : ":" + port));
+		if (REQUEST_LOGGING) System.out.println(new String(request.getBytes()));
 
 		out.write(request.getBytes());
 		Response response = readResponse(in);
-
+		if (RESPONSE_LOGGING) {
+			response.disableCompression();
+			System.out.println(new String(response.getBytes()));
+		}
+		
 		if (response.responseCode / 100 != 2) {
 			throw new IOException(response.responseCode + " " + response.responseText);
 		}

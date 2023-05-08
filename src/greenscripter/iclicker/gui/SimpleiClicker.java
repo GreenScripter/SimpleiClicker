@@ -19,6 +19,7 @@ import greenscripter.iclicker.api.data.response.CoursesResponse.Course;
 import greenscripter.iclicker.api.data.response.QuestionStatusResponse;
 import greenscripter.iclicker.gui.InPollWindow.PollQuestion;
 import greenscripter.iclicker.gui.ViewResultsWindow.Category;
+import greenscripter.utils.http.HTTP;
 
 public class SimpleiClicker {
 
@@ -32,6 +33,10 @@ public class SimpleiClicker {
 	List<Course> courses = new ArrayList<>();
 
 	public static void main(String[] args) throws Exception {
+		if (args.length > 0 && args[0].equals("-v")) {
+			HTTP.REQUEST_LOGGING = true;
+			HTTP.RESPONSE_LOGGING = true;
+		}
 		IClickerInstance instance = null;
 		try {
 			File auth = new File("iclickerauth.json");
