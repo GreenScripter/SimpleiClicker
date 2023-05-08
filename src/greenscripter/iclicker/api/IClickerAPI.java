@@ -155,7 +155,7 @@ public class IClickerAPI {
 	 * Start a class
 	 */
 	public ClassStartResponse startClass(String classId) throws IOException {
-		Request req = createRequest("POST").setContent(gson.toJson(new ClassStartRequest("21f10afd-5dde-434f-9b39-06e4771becbc")).getBytes());
+		Request req = createRequest("POST").setContent(gson.toJson(new ClassStartRequest(classId)).getBytes());
 		req.headers.add("content-type", "application/vnd.reef.class-start-request-v1+json");
 
 		addTRGN(req);
@@ -169,7 +169,7 @@ public class IClickerAPI {
 	 * Stop a class
 	 */
 	public ClassStartResponse stopClass(String classId) throws IOException {
-		Request req = createRequest("POST").setContent(gson.toJson(new ClassStopRequest("21f10afd-5dde-434f-9b39-06e4771becbc", false)).getBytes());
+		Request req = createRequest("POST").setContent(gson.toJson(new ClassStopRequest(classId, false)).getBytes());
 		req.headers.add("content-type", "application/vnd.reef.class-stop-request-v1+json");
 
 		addTRGN(req);
