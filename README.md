@@ -14,3 +14,4 @@ A reimplementation of the iClicker Cloud teacher application in Java.
 - Profile API implemented.
 - Course info API implemented.
 - Implement selecting displays and partial screen screenshots for questions.
+- Ending a class with a poll with no questions throws a 404 error from the api, but the class still ends
