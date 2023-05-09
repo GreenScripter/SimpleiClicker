@@ -66,7 +66,7 @@ public class SimpleiClicker {
 		try {
 			this.courses = instance.getCourses().courses;
 			for (Course c : courses) {
-				classListWindow.addClass(c.courseId, c.name);
+				if (c.archived == null) classListWindow.addClass(c.courseId, c.name);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

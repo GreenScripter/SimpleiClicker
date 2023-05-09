@@ -16,7 +16,7 @@ import java.util.List;
 	"start": "2023-04-10T07:00:00Z",
 	"end": "2023-10-11T06:59:59Z",
 	"meetingTimes": [],
-	"archived": null
+	"archived": null // or string date
 }]
 //manual list type
  */
@@ -34,6 +34,6 @@ public class CoursesResponse {
 		public String start;
 		public String end;
 		public List<Object> meetingTimes;
-		public Object archived;
+		public String archived;
 	}
 }
