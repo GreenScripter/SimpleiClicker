@@ -54,7 +54,7 @@ public class IClickerAPI {
 	 * instructorAnswer.
 	 */
 	public QuestionAnswerResponse setQuestionAnswer(String activityId, String questionId, String answer, boolean correct) throws IOException {
-		Request req = createOAuth2Request("POST");
+		Request req = addBearer(createWebRequest("POST"));
 		req.headers.add("content-type", "application/json");
 		req.setContent(gson.toJson(new QuestionAnswerRequest(activityId, answer, false, correct, false, questionId)).getBytes());
 		Response r = HTTP.sendRequest("https://api.iclicker.com/v2/activities/" + activityId + "/questions/" + questionId + "/results", req);
@@ -66,7 +66,7 @@ public class IClickerAPI {
 	 * End an activity that is currently in progress.
 	 */
 	public EndActivityResponse endActivity(String activityId) throws IOException {
-		Request req = createOAuth2Request("POST");
+		Request req = addBearer(createWebRequest("POST"));
 		req.headers.add("content-type", "application/json");
 		req.setContent(gson.toJson(new EndActivityRequest()).getBytes());
 		Response r = HTTP.sendRequest("https://api.iclicker.com/v2/activities/" + activityId + "/end-activity", req);
@@ -78,7 +78,7 @@ public class IClickerAPI {
 	 * End a question that is currently in progress.
 	 */
 	public EndQuestionResponse endQuestion(String questionId) throws IOException {
-		Request req = createOAuth2Request("POST");
+		Request req = addBearer(createWebRequest("POST"));
 		req.headers.add("content-type", "application/json");
 		req.setContent(gson.toJson(new EndQuestionRequest()).getBytes());
 		Response r = HTTP.sendRequest("https://api.iclicker.com/v2/questions/" + questionId + "/end-question", req);
@@ -91,7 +91,7 @@ public class IClickerAPI {
 	 * intervals during a poll.
 	 */
 	public QuestionStatusResponse getQuestionStatus(String classId, String activityId, String questionId) throws IOException {
-		Request req = createOAuth2Request("GET");
+		Request req = addBearer(createWebRequest("GET"));
 
 		Response r = HTTP.sendRequest("https://api.iclicker.com/v2/reporting/courses/" + classId + "/activities/" + activityId + "/questions/view?questionId=" + questionId, req);
 		QuestionStatusResponse resp = deserialize(r.body, QuestionStatusResponse.class);
@@ -102,7 +102,7 @@ public class IClickerAPI {
 	 * Start a SINGLE_ANSWER POLL question.
 	 */
 	public PollQuestionResponse createPollQuestion(String activityId, String base64Image) throws IOException {
-		Request req = createOAuth2Request("POST");
+		Request req = addBearer(createClientRequest("POST"));
 		req.headers.add("content-type", "application/json");
 
 		req.setContent(gson.toJson(new PollQuestionRequest(false, "SINGLE_ANSWER", base64Image, false, false, Instant.now().toString())).getBytes());
@@ -117,7 +117,7 @@ public class IClickerAPI {
 	 * class.
 	 */
 	public StartActivityResponse startActivity(String classId, String meetingId) throws IOException {
-		Request req = createOAuth2Request("POST");
+		Request req = addBearer(createClientRequest("POST"));
 		req.headers.add("content-type", "application/json");
 
 		req.setContent(gson.toJson(new StartActivityRequest("POLL", 0, 1, classId, meetingId, Instant.now().toString())).getBytes());
@@ -131,7 +131,7 @@ public class IClickerAPI {
 	 * Get a list of active classes, regularly called by the normal client at all times.
 	 */
 	public ActiveClassResponse getActiveClasses(String userId) throws IOException {
-		Request req = createOAuth2Request("POST");
+		Request req = addBearer(createWebRequest("POST"));
 		req.headers.add("content-type", "application/vnd.reef.class-active-list-request-v1+json");
 		req.headers.remove("accept");
 		req.headers.add("accept", "application/vnd.reef.class-active-list-response-v1+json");
@@ -146,7 +146,7 @@ public class IClickerAPI {
 	 * progress.
 	 */
 	public ClassStatusResponse getClassStatus(String classId) throws IOException {
-		Response r = HTTP.sendRequest("https://api.iclicker.com/activity/class/status/" + classId, createOAuth2Request("GET"));
+		Response r = HTTP.sendRequest("https://api.iclicker.com/activity/class/status/" + classId, addBearer(createWebRequest("GET")));
 		ClassStatusResponse resp = deserialize(r.body, ClassStatusResponse.class);
 		return resp;
 	}
@@ -155,7 +155,7 @@ public class IClickerAPI {
 	 * Start a class
 	 */
 	public ClassStartResponse startClass(String classId) throws IOException {
-		Request req = createRequest("POST").setContent(gson.toJson(new ClassStartRequest(classId)).getBytes());
+		Request req = createClientRequest("POST").setContent(gson.toJson(new ClassStartRequest(classId)).getBytes());
 		req.headers.add("content-type", "application/vnd.reef.class-start-request-v1+json");
 
 		addTRGN(req);
@@ -169,7 +169,7 @@ public class IClickerAPI {
 	 * Stop a class
 	 */
 	public ClassStartResponse stopClass(String classId) throws IOException {
-		Request req = createRequest("POST").setContent(gson.toJson(new ClassStopRequest(classId, false)).getBytes());
+		Request req = createClientRequest("POST").setContent(gson.toJson(new ClassStopRequest(classId, false)).getBytes());
 		req.headers.add("content-type", "application/vnd.reef.class-stop-request-v1+json");
 
 		addTRGN(req);
@@ -183,7 +183,7 @@ public class IClickerAPI {
 	 * Get course list.
 	 */
 	public CoursesResponse getCourses(String userId) throws IOException {
-		Response r = HTTP.sendRequest("https://api.iclicker.com/v1/users/" + userId + "/views/instructor-courses", createOAuth2Request("GET"));
+		Response r = HTTP.sendRequest("https://api.iclicker.com/v1/users/" + userId + "/views/instructor-courses", addBearer(createWebRequest("GET")));
 		CoursesResponse.Course[] courses = deserialize(r.body, CoursesResponse.Course[].class);
 		CoursesResponse resp = new CoursesResponse();
 		resp.courses.addAll(List.of(courses));
@@ -194,7 +194,7 @@ public class IClickerAPI {
 	 * Get the teacher profile.
 	 */
 	public ProfileResponse getProfile() throws IOException {
-		Response r = HTTP.sendRequest("https://api.iclicker.com/trogon/v4/profile", createOAuth2Request("GET"));
+		Response r = HTTP.sendRequest("https://api.iclicker.com/trogon/v4/profile", addBearer(createWebRequest("GET")));
 		return deserialize(r.body, ProfileResponse.class);
 	}
 
@@ -203,7 +203,7 @@ public class IClickerAPI {
 	 */
 	//TODO WIP
 	public LoginResponse autoLogin() throws IOException {
-		Request req = createRequest("POST").setContent(gson.toJson(new AutoLoginRequest(UUID.randomUUID().toString(), "reef-instructor-web-client-id")).getBytes());
+		Request req = createWebRequest("POST").setContent(gson.toJson(new AutoLoginRequest(UUID.randomUUID().toString(), "reef-instructor-web-client-id")).getBytes());
 		req.headers.add("content-type", "application/json");
 		Response r = HTTP.sendRequest("https://api.iclicker.com/login/autologin", req);
 		System.out.println(new String(req.getBytes()));
@@ -216,7 +216,7 @@ public class IClickerAPI {
 	 * Log in with email and password
 	 */
 	public LoginResponse login(String email, String password) throws IOException {
-		Request req = createRequest("POST").setContent(gson.toJson(new LoginRequest(email, password)).getBytes());
+		Request req = createWebRequest("POST").setContent(gson.toJson(new LoginRequest(email, password)).getBytes());
 		req.headers.add("content-type", "application/vnd.reef.login-proxy-request-v1+json");
 		Response r = HTTP.sendRequest("https://api.iclicker.com/authproxy/login", req);
 		return deserialize(r.body, LoginResponse.class);
@@ -247,7 +247,7 @@ public class IClickerAPI {
 	 * accept-encoding: gzip, deflate, br
 	 * {"email":"","password":""}
 	 */
-	public Request createRequest(String method) {
+	public Request createWebRequest(String method) {
 		Request r = new Request();
 		r.method = method;
 		r.headers.add("origin", "https://instructor.iclicker.com");
@@ -262,9 +262,32 @@ public class IClickerAPI {
 		r.headers.add("accept-language", "en-US,*");
 		return r;
 	}
+	
+	public Request createClientRequest(String method) {
+		Request r = new Request();
+		r.method = method;
+		r.headers.add("origin", "https://instructor.iclicker.com");
+		r.headers.add("user-agent", "Mozilla/5.0");
+		r.headers.add("accept", "application/json");
+		r.headers.add("sec-fetch-dest", "empty");
+		r.headers.add("client-tag", "REEF/INSTRUCTOR/5.3.1/MAC/22.3.0");
+		r.headers.add("sec-fetch-site", "same-site");
+		r.headers.add("sec-fetch-mode", "cors");
+		r.headers.add("referer", "https://instructor.iclicker.com/");
+		r.headers.add("accept-encoding", "gzip");
+		r.headers.add("accept-language", "en-US,*");
+		r.headers.add("REEF-Client-ID", "reef-instructor");
+		//Add date
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("EEE, dd LLL yyyy HH:mm:ss zzz");
+		r.headers.add("date", ZonedDateTime.now().withZoneSameInstant(ZoneId.of("GMT")).format(format));
+		return r;
+	}
 
 	public Request addBearer(Request r) {
-		if (token != null) r.headers.add("authorization", "Bearer " + token);
+		if (token != null) {
+			r.headers.add("reef-auth-type", "oauth");
+			r.headers.add("authorization", "Bearer " + token);
+		}
 		return r;
 	}
 
@@ -280,9 +303,7 @@ public class IClickerAPI {
 	 */
 	public Request addTRGN(Request r) {
 		try {
-			//Add date
-			DateTimeFormatter format = DateTimeFormatter.ofPattern("EEE, dd LLL yyyy HH:mm:ss zzz");
-			r.headers.add("date", ZonedDateTime.now().withZoneSameInstant(ZoneId.of("GMT")).format(format));
+			
 
 			//userid as base64 from hex
 			String base64Id = Base64.getEncoder().encodeToString(hexToBytes(userid));
@@ -334,7 +355,4 @@ public class IClickerAPI {
 		return bytes;
 	}
 
-	public Request createOAuth2Request(String method) {
-		return addBearer(createRequest(method));
-	}
 }
