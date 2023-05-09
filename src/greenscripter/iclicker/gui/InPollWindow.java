@@ -20,6 +20,7 @@ public class InPollWindow extends JFrame {
 	SimpleiClicker controller;
 	String activityId;
 	List<PollQuestion> questions = new ArrayList<>();
+	boolean anyQuestionStarted = false;
 
 	public InPollWindow(SimpleiClicker controller, String activityId, String name) throws AWTException {
 		this.controller = controller;
@@ -50,6 +51,7 @@ public class InPollWindow extends JFrame {
 				this.setVisible(true);
 				controller.startQuestion(this.activityId, image);
 				viewResults.setEnabled(true);
+				anyQuestionStarted = true;
 			});
 
 		});

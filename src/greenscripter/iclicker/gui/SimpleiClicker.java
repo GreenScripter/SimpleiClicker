@@ -147,7 +147,7 @@ public class SimpleiClicker {
 
 	public void endPoll(String activityId) {
 		try {
-			instance.endPoll(activityId);
+			if (inPollWindow.anyQuestionStarted) instance.endPoll(activityId);
 
 			inClassWindow.setVisible(true);
 
