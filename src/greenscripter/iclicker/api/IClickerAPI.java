@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -105,7 +106,7 @@ public class IClickerAPI {
 		Request req = addBearer(createClientRequest("POST"));
 		req.headers.add("content-type", "application/json");
 
-		req.setContent(gson.toJson(new PollQuestionRequest(false, "SINGLE_ANSWER", base64Image, false, false, Instant.now().toString())).getBytes());
+		req.setContent(gson.toJson(new PollQuestionRequest(false, "SINGLE_ANSWER", base64Image, false, false, getTimeString())).getBytes());
 
 		Response r = HTTP.sendRequest("https://api.iclicker.com/v2/activities/" + activityId + "/questions", req);
 		PollQuestionResponse resp = deserialize(r.body, PollQuestionResponse.class);
@@ -120,7 +121,7 @@ public class IClickerAPI {
 		Request req = addBearer(createClientRequest("POST"));
 		req.headers.add("content-type", "application/json");
 
-		req.setContent(gson.toJson(new StartActivityRequest("POLL", 0, 1, classId, meetingId, Instant.now().toString())).getBytes());
+		req.setContent(gson.toJson(new StartActivityRequest("POLL", 0, 1, classId, meetingId, getTimeString())).getBytes());
 
 		Response r = HTTP.sendRequest("https://api.iclicker.com/v2/courses/" + classId + "/activities", req);
 		StartActivityResponse resp = deserialize(r.body, StartActivityResponse.class);
@@ -262,7 +263,7 @@ public class IClickerAPI {
 		r.headers.add("accept-language", "en-US,*");
 		return r;
 	}
-	
+
 	public Request createClientRequest(String method) {
 		Request r = new Request();
 		r.method = method;
@@ -303,7 +304,6 @@ public class IClickerAPI {
 	 */
 	public Request addTRGN(Request r) {
 		try {
-			
 
 			//userid as base64 from hex
 			String base64Id = Base64.getEncoder().encodeToString(hexToBytes(userid));
@@ -353,6 +353,10 @@ public class IClickerAPI {
 		System.arraycopy(initial, Math.max(initial.length - bytes.length, 0), bytes, Math.max(bytes.length - initial.length, 0), bytes.length);
 
 		return bytes;
+	}
+
+	public String getTimeString() {
+		return Instant.now().truncatedTo(ChronoUnit.MILLIS).toString();
 	}
 
 }
