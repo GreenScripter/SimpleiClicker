@@ -115,19 +115,19 @@ public class SimpleiClicker {
 	public void endClass(String uuid) {
 		try {
 			instance.stopClass(uuid);
-			inClassWindow.setVisible(false);
-			inClassWindow = null;
-
-			classListWindow.setVisible(true);
-
-			classListWindow.classes.stream()//
-					.filter(c -> c.uuid.equals(uuid))//
-					.forEach(c -> c.setInProgress(false));
 
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, e.getClass() + " " + e.getMessage(), "Stop Class Error", JOptionPane.WARNING_MESSAGE);
 		}
+		inClassWindow.setVisible(false);
+		inClassWindow = null;
+
+		classListWindow.setVisible(true);
+
+		classListWindow.classes.stream()//
+				.filter(c -> c.uuid.equals(uuid))//
+				.forEach(c -> c.setInProgress(false));
 	}
 
 	public void startPoll(String classId, String meetingId) {
