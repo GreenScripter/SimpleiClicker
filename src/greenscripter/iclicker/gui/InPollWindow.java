@@ -49,9 +49,15 @@ public class InPollWindow extends JFrame {
 			SwingUtilities.invokeLater(() -> {
 				BufferedImage image = r.createScreenCapture(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds());
 				this.setVisible(true);
-				controller.startQuestion(this.activityId, image);
-				viewResults.setEnabled(true);
-				anyQuestionStarted = true;
+				ScreenshotPreviewWindow preview = new ScreenshotPreviewWindow(image, 5000);
+				preview.setSize(this.getWidth(), this.getWidth());
+				preview.setLocation(getX(), getY() + getHeight());
+				preview.setVisible(true);
+				SwingUtilities.invokeLater(() -> {
+					controller.startQuestion(this.activityId, image);
+					viewResults.setEnabled(true);
+					anyQuestionStarted = true;
+				});
 			});
 
 		});

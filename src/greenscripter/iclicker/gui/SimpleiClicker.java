@@ -136,7 +136,8 @@ public class SimpleiClicker {
 			inClassWindow.setVisible(false);
 
 			inPollWindow = new InPollWindow(this, poll.activityId, poll.name);
-			inPollWindow.setLocationRelativeTo(inClassWindow);
+			inPollWindow.setLocation(inClassWindow.getLocation());
+
 			inPollWindow.setVisible(true);
 
 		} catch (IOException | AWTException e) {
@@ -173,7 +174,7 @@ public class SimpleiClicker {
 			if (viewResultsWindow != null) viewResultsWindow.setButtons();
 
 			inQuestionWindow = new InQuestionWindow(this, question.questionId, question.name);
-			inQuestionWindow.setLocationRelativeTo(inPollWindow);
+			inQuestionWindow.setLocation(inPollWindow.getLocation());
 			inQuestionWindow.setVisible(true);
 
 		} catch (IOException e) {
