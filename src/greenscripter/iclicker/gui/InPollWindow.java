@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.awt.AWTException;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,6 +25,33 @@ public class InPollWindow extends JFrame {
 	String activityId;
 	List<PollQuestion> questions = new ArrayList<>();
 	boolean anyQuestionStarted = false;
+
+	static private BufferedImage text2Img(String message) {
+		BufferedImage image = new BufferedImage(400, 400, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = image.getGraphics();
+		g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 24));
+		g.setColor(Color.BLACK);
+		g.drawString(message, 0, 200);
+		return image;
+	}
+
+	static private BufferedImage captureScreen() {
+		// If SCREENCAPCMD is defined, it should be a commandline that generates an image
+		// on stdout. The following command will do that on ubuntu:
+		//     SCREENCAPCMD="spectacle -b -n -o /proc/self/fd/1" java ...
+		String screenCapCmd = System.getenv("SCREENCAPCMD");
+		try {
+			if (screenCapCmd == null) {
+				Robot r = new Robot();
+				return r.createScreenCapture(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds());
+			} else {
+				return ImageIO.read(Runtime.getRuntime().exec(screenCapCmd).getInputStream());
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return text2Img(ex.getMessage());
+		}
+	}
 
 	public InPollWindow(SimpleiClicker controller, String activityId, String name) throws AWTException {
 		this.controller = controller;
@@ -42,12 +73,10 @@ public class InPollWindow extends JFrame {
 		this.pack();
 		this.setLocationRelativeTo(null);
 
-		Robot r = new Robot();
-
 		startQuestion.addActionListener(e -> {
 			this.setVisible(false);
 			SwingUtilities.invokeLater(() -> {
-				BufferedImage image = r.createScreenCapture(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds());
+				BufferedImage image = captureScreen();
 				this.setVisible(true);
 				ScreenshotPreviewWindow preview = new ScreenshotPreviewWindow(image, 5000);
 				preview.setSize(this.getWidth(), this.getWidth());
